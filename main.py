@@ -2,12 +2,12 @@ import torch
 import time
 import random
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from torch import nn, optim
 from collections import OrderedDict
 from torch.backends import cudnn
 
-from utils import draw_two_dimension
+# from utils import draw_two_dimension
 
 class Net(nn.Module):
     def __init__(self):
@@ -50,11 +50,11 @@ class Net(nn.Module):
         cudnn.deterministic = True
 
 
-def draw_loss(loss_list):
-    plt.figure(figsize=(12, 9))
-    plt.plot(range(1, len(loss_list) + 1), loss_list)
-    plt.show()
-    plt.close()
+# def draw_loss(loss_list):
+#     plt.figure(figsize=(12, 9))
+#     plt.plot(range(1, len(loss_list) + 1), loss_list)
+#     plt.show()
+#     plt.close()
 
 
 def train(model, args, x1, x2, x3, y1, y2, y3):
@@ -96,15 +96,15 @@ def train(model, args, x1, x2, x3, y1, y2, y3):
                 'model_state_dict': model.state_dict(),
                 'loss': loss.item()}, model_save_path_last)
         scheduler.step()
-        if epoch % args.save_step == 0 or epoch == args.epoch:
-            draw_two_dimension(
-                y_lists=[loss_record, loss1_record, loss2_record, loss3_record],
-                x_list=range(1, 1 + len(loss_record)),
-                color_list=["black", "r", "g", "b"],
-                line_style_list=["solid"] * 4,
-                legend_list=["loss", "loss1", "loss2", "loss3"],
-                fig_y_label="loss"
-            )
+        # if epoch % args.save_step == 0 or epoch == args.epoch:
+        #     draw_two_dimension(
+        #         y_lists=[loss_record, loss1_record, loss2_record, loss3_record],
+        #         x_list=range(1, 1 + len(loss_record)),
+        #         color_list=["black", "r", "g", "b"],
+        #         line_style_list=["solid"] * 4,
+        #         legend_list=["loss", "loss1", "loss2", "loss3"],
+        #         fig_y_label="loss"
+        #     )
     return model
 
 
