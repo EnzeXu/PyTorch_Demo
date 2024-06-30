@@ -110,10 +110,10 @@ def train(model, args, x1, x2, x3, y1, y2, y3):
 
 class Args:
     def __init__(self):
-        self.epoch = 10000
-        self.epoch_step = 1000
+        self.epoch = 1000
+        self.epoch_step = 100
         self.lr = 0.01
-        self.save_step = 10000
+        self.save_step = 1000
 
 
 def run():
