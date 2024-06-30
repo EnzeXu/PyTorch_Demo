@@ -119,6 +119,7 @@ class Args:
 def run():
     args = Args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # "mps"
+    print(f"using device:", device)
     model = Net().to(device)
     x = torch.tensor([[i * 0.01] for i in range(100)], dtype=torch.float32).to(device)  # [[0.00], [0.01], ..., [0.99]]
     y1 = x * 3.1415926
