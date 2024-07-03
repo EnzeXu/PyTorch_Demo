@@ -11,6 +11,7 @@ import os
 
 # 检查是否支持MPS
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"using device: {device}")
 
 # 加载数据
 # data = pd.read_csv('mdmom_forNN_3July2024.csv')
