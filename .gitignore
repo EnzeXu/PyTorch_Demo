@@ -1,3 +1,8 @@
 .idea/*
 __pycache__/*
 venv/*
+*.csv
+*.pth
+*.xlsx
+*.pt
+losses_embedding_numerical.txt
