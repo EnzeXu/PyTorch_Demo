@@ -129,7 +129,7 @@ train_losses = []
 val_losses = []
 
 # 训练模型
-num_epochs = 10000
+num_epochs = 100000
 ckp_path = 'checkpoints'  # 定义 checkpoint 文件保存的目录
 os.makedirs(ckp_path, exist_ok=True)
 
@@ -162,7 +162,7 @@ for epoch in range(num_epochs):
 
     scheduler.step()
 
-    if (epoch + 1) % 100 == 0:
+    if (epoch + 1) % 1000 == 0:
         print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
 
         # 保存 checkpoint
