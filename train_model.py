@@ -8,6 +8,20 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import os
+import wandb
+import datetime
+import pytz
+
+def get_now_string(time_string="%Y%m%d_%H%M%S_%f"):
+    # return datetime.datetime.now().strftime(time_string)
+    est = pytz.timezone('America/New_York')
+
+    # Get the current time in UTC and convert it to EST
+    utc_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    est_now = utc_now.astimezone(est)
+
+    # Return the time in the desired format
+    return est_now.strftime(time_string)
 
 # 检查是否支持MPS
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -132,43 +146,54 @@ val_losses = []
 num_epochs = 100000
 ckp_path = 'checkpoints'  # 定义 checkpoint 文件保存的目录
 os.makedirs(ckp_path, exist_ok=True)
+time_string = get_now_string()
+with wandb.init(project='simple-debug', name=f"test_{time_string}"):
+    for epoch in range(num_epochs):
+        model.train()
+        train_loss = 0
+        global_step = epoch + 1  # 可以根据具体情况定义 global_step
 
-for epoch in range(num_epochs):
-    model.train()
-    train_loss = 0
-    global_step = epoch + 1  # 可以根据具体情况定义 global_step
-
-    for X_batch_categorical, X_batch_numerical, y_batch in train_loader:
-        optimizer.zero_grad()
-        outputs = model(X_batch_categorical, X_batch_numerical)
-        loss = criterion(outputs, y_batch)
-        loss.backward()
-        optimizer.step()
-        train_loss += loss.item()
-    
-    train_loss /= len(train_loader)
-    train_losses.append(train_loss)
-
-    model.eval()
-    val_loss = 0
-    with torch.no_grad():
-        for X_batch_categorical, X_batch_numerical, y_batch in val_loader:
+        for X_batch_categorical, X_batch_numerical, y_batch in train_loader:
+            optimizer.zero_grad()
             outputs = model(X_batch_categorical, X_batch_numerical)
             loss = criterion(outputs, y_batch)
-            val_loss += loss.item()
-    
-    val_loss /= len(val_loader)
-    val_losses.append(val_loss)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()
 
-    scheduler.step()
+        train_loss /= len(train_loader)
+        train_losses.append(train_loss)
 
-    if (epoch + 1) % 1000 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for X_batch_categorical, X_batch_numerical, y_batch in val_loader:
+                outputs = model(X_batch_categorical, X_batch_numerical)
+                loss = criterion(outputs, y_batch)
+                val_loss += loss.item()
 
-        # 保存 checkpoint
-        # print("*** save checkpoint ****")
-        ckpt_file_path = os.path.join(ckp_path, f'step_{global_step}.pt')
-        _save_checkpoint(ckpt_file_path, model, epoch, global_step, optimizer)
+        val_loss /= len(val_loader)
+        val_losses.append(val_loss)
+
+        scheduler.step()
+
+        try:
+            wandb.log({
+                'epoch': epoch + 1,
+                'train_loss': train_loss,
+                'val_loss': val_loss,
+                'lr': optimizer.param_groups[0]["lr"],
+            })
+        except Exception as e:
+            pass
+
+        if (epoch + 1) % 1000 == 0:
+            print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
+
+            # 保存 checkpoint
+            # print("*** save checkpoint ****")
+            ckpt_file_path = os.path.join(ckp_path, f'step_{global_step}.pt')
+            _save_checkpoint(ckpt_file_path, model, epoch, global_step, optimizer)
 
 # 保存模型
 torch.save(model.state_dict(), 'mlp_model_with_embedding_and_numerical.pth')
