@@ -138,8 +138,8 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
         # print(f"x_cat shape: {x_cat.shape}")
         x_cat = self.categorical_layer(x_cat)
         x_num = self.numerical_layer(x_numerical)
-        print(f"[Before concat] x_cat shape: {x_cat.shape} [{torch.min(x_cat)},{torch.max(x_cat)}]")
-        print(f"[Before concat] x_num shape: {x_num.shape} [{torch.min(x_num)},{torch.max(x_num)}]")
+        # print(f"[Before concat] x_cat shape: {x_cat.shape} [{torch.min(x_cat)},{torch.max(x_cat)}]")
+        # print(f"[Before concat] x_num shape: {x_num.shape} [{torch.min(x_num)},{torch.max(x_num)}]")
         x = torch.cat((x_cat, x_num), dim=1)
         x = self.combine_layer(x)
         return x
