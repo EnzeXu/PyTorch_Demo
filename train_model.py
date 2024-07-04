@@ -15,12 +15,8 @@ import pytz
 def get_now_string(time_string="%Y%m%d_%H%M%S_%f"):
     # return datetime.datetime.now().strftime(time_string)
     est = pytz.timezone('America/New_York')
-
-    # Get the current time in UTC and convert it to EST
     utc_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     est_now = utc_now.astimezone(est)
-
-    # Return the time in the desired format
     return est_now.strftime(time_string)
 
 # 检查是否支持MPS
@@ -90,9 +86,9 @@ y_test_tensor = torch.tensor(y_test, dtype=torch.float32).unsqueeze(1).to(device
 train_dataset = TensorDataset(X_train_categorical_tensor, X_train_numerical_tensor, y_train_tensor)
 val_dataset = TensorDataset(X_val_categorical_tensor, X_val_numerical_tensor, y_val_tensor)
 test_dataset = TensorDataset(X_test_categorical_tensor, X_test_numerical_tensor, y_test_tensor)
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
 # 构建 MLP 模型
 class MLPWithEmbeddingAndNumerical(nn.Module):
@@ -244,10 +240,12 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
         if (epoch + 1) % 2000 == 0 or epoch + 1 == num_epochs:
 
             # 保存模型
-            torch.save(model.state_dict(), 'mlp_model_with_embedding_and_numerical.pth')
+            if not os.path.exists("save/"):
+                os.makedirs("save/")
+            torch.save(model.state_dict(), f'save/mlp_model_with_embedding_and_numerical_{time_string}.pth')
 
             # 保存损失值到文本文件
-            with open('losses_embedding_numerical.txt', 'w') as f:
+            with open(f'save/losses_embedding_numerical_{time_string}.txt', 'w') as f:
                 for t_loss, v_loss in zip(train_losses, val_losses):
                     f.write(f'{t_loss},{v_loss}\n')
 
