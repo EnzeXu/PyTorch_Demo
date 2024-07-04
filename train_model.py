@@ -54,7 +54,16 @@ numerical_indices = [i for i, col in enumerate(all_columns) if col in numerical_
 # 分离类别型和数值型变量
 X_categorical = X[:, categorical_indices]
 X_numerical = X[:, numerical_indices]
-print(f"X_categorical: {X_categorical.shape}, X_numerical: {X_numerical.shape}")
+
+
+
+print(f"X_categorical [before purification]: {X_categorical.shape}")
+X_categorical_max = np.max(X_categorical, axis=0)
+X_categorical_min = np.min(X_categorical, axis=0)
+mask_indices = np.nonzero(X_categorical_max != X_categorical_min)[0]
+X_categorical = X_categorical[:, mask_indices]
+print(f"X_categorical [after purification]: {X_categorical.shape}")
+print(f"X_numerical: {X_numerical.shape}")
 
 # 标准化数值型特征数据
 scaler = StandardScaler()
@@ -129,6 +138,8 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
         # print(f"x_cat shape: {x_cat.shape}")
         x_cat = self.categorical_layer(x_cat)
         x_num = self.numerical_layer(x_numerical)
+        print(f"[Before concat] x_cat shape: {x_cat.shape} [{torch.min(x_cat)},{torch.max(x_cat)}]")
+        print(f"[Before concat] x_num shape: {x_num.shape} [{torch.min(x_num)},{torch.max(x_num)}]")
         x = torch.cat((x_cat, x_num), dim=1)
         x = self.combine_layer(x)
         return x
@@ -222,7 +233,7 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
         except Exception as e:
             pass
 
-        if (epoch + 1) % 200 == 0:
+        if (epoch + 1) % 200 == 0 or epoch + 1 == num_epochs:
             print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
 
             # 保存 checkpoint
