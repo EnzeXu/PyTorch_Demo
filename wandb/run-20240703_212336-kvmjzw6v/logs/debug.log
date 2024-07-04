@@ -1,0 +1,34 @@
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Current SDK version is 0.17.4
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Configure stats pid to 48964
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Loading settings from /Users/enze/.config/wandb/settings
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Loading settings from /Users/enze/workspace/pytorch_demo/wandb/settings
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train_model.py', 'program_abspath': '/Users/enze/workspace/pytorch_demo/train_model.py', 'program': '/Users/enze/workspace/pytorch_demo/train_model.py'}
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_init.py:_log_setup():529] Logging user logs to /Users/enze/workspace/pytorch_demo/wandb/run-20240703_212336-kvmjzw6v/logs/debug.log
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_init.py:_log_setup():530] Logging internal logs to /Users/enze/workspace/pytorch_demo/wandb/run-20240703_212336-kvmjzw6v/logs/debug-internal.log
+2024-07-03 21:23:36,506 INFO    MainThread:48964 [wandb_init.py:init():569] calling init triggers
+2024-07-03 21:23:36,507 INFO    MainThread:48964 [wandb_init.py:init():576] wandb.init called with sweep_config: {}
+config: {}
+2024-07-03 21:23:36,507 INFO    MainThread:48964 [wandb_init.py:init():619] starting backend
+2024-07-03 21:23:36,507 INFO    MainThread:48964 [wandb_init.py:init():623] setting up manager
+2024-07-03 21:23:36,509 INFO    MainThread:48964 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=spawn,fork,forkserver, using: spawn
+2024-07-03 21:23:36,511 INFO    MainThread:48964 [wandb_init.py:init():631] backend started and connected
+2024-07-03 21:23:36,516 INFO    MainThread:48964 [wandb_init.py:init():720] updated telemetry
+2024-07-03 21:23:36,557 INFO    MainThread:48964 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-07-03 21:23:36,887 INFO    MainThread:48964 [wandb_run.py:_on_init():2402] communicating current version
+2024-07-03 21:23:37,043 INFO    MainThread:48964 [wandb_run.py:_on_init():2411] got version response 
+2024-07-03 21:23:37,043 INFO    MainThread:48964 [wandb_init.py:init():804] starting run threads in backend
+2024-07-03 21:23:37,175 INFO    MainThread:48964 [wandb_run.py:_console_start():2380] atexit reg
+2024-07-03 21:23:37,175 INFO    MainThread:48964 [wandb_run.py:_redirect():2235] redirect: wrap_raw
+2024-07-03 21:23:37,175 INFO    MainThread:48964 [wandb_run.py:_redirect():2300] Wrapping output streams.
+2024-07-03 21:23:37,175 INFO    MainThread:48964 [wandb_run.py:_redirect():2325] Redirects installed.
+2024-07-03 21:23:37,177 INFO    MainThread:48964 [wandb_init.py:init():847] run started, returning control to user process
+2024-07-03 21:23:37,218 INFO    MainThread:48964 [wandb_run.py:_finish():2109] finishing run glhf/simple-debug/kvmjzw6v
+2024-07-03 21:23:37,218 INFO    MainThread:48964 [wandb_run.py:_atexit_cleanup():2349] got exitcode: 1
+2024-07-03 21:23:37,218 INFO    MainThread:48964 [wandb_run.py:_restore():2332] restore
+2024-07-03 21:23:37,218 INFO    MainThread:48964 [wandb_run.py:_restore():2338] restore done
+2024-07-03 21:23:44,296 INFO    MainThread:48964 [wandb_run.py:_footer_history_summary_info():3991] rendering history
+2024-07-03 21:23:44,296 INFO    MainThread:48964 [wandb_run.py:_footer_history_summary_info():4023] rendering summary
+2024-07-03 21:23:44,302 INFO    MainThread:48964 [wandb_run.py:_footer_sync_info():3950] logging synced files

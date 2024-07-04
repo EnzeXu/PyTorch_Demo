@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/enze/workspace/pytorch_demo/train_model.py", line 179, in <module>
+    outputs = model(X_batch_categorical, X_batch_numerical)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+TypeError: forward() takes 2 positional arguments but 3 were given

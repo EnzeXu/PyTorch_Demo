@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/enze/workspace/pytorch_demo/train_model.py", line 192, in <module>
+    outputs = model(X_batch_categorical, X_batch_numerical)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/enze/workspace/pytorch_demo/train_model.py", line 129, in forward
+    x_cat = self.categorical_layer(x_cat)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/container.py", line 139, in forward
+    input = module(input)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/enze/workspace/pytorch_demo/venv/lib/python3.9/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (16x3808 and 16x64)
