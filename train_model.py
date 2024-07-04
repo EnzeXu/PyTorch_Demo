@@ -171,7 +171,7 @@ embedding_dim = 16
 model = MLPWithEmbeddingAndNumerical(categorical_input_dim, numerical_input_dim, embedding_dim).to(device)
 # model = MLP(11).to(device)
 criterion = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.1)
 
 # 定义 _save_checkpoint 函数
@@ -241,38 +241,40 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
             ckpt_file_path = os.path.join(ckp_path, f'step_{global_step}.pt')
             _save_checkpoint(ckpt_file_path, model, epoch, global_step, optimizer)
 
-# 保存模型
-torch.save(model.state_dict(), 'mlp_model_with_embedding_and_numerical.pth')
+        if (epoch + 1) % 2000 == 0 or epoch + 1 == num_epochs:
 
-# 保存损失值到文本文件
-with open('losses_embedding_numerical.txt', 'w') as f:
-    for t_loss, v_loss in zip(train_losses, val_losses):
-        f.write(f'{t_loss},{v_loss}\n')
+            # 保存模型
+            torch.save(model.state_dict(), 'mlp_model_with_embedding_and_numerical.pth')
 
-# 评估模型
-model.eval()
-with torch.no_grad():
-    y_pred_train = model(X_train_categorical_tensor, X_train_numerical_tensor).round()
-    y_pred_val = model(X_val_categorical_tensor, X_val_numerical_tensor).round()
-    y_pred_test = model(X_test_categorical_tensor, X_test_numerical_tensor).round()
-    y_pred_test_prob = model(X_test_categorical_tensor, X_test_numerical_tensor)
-    
-    train_accuracy = (y_pred_train.eq(y_train_tensor).sum() / float(y_train_tensor.shape[0])).item()
-    val_accuracy = (y_pred_val.eq(y_val_tensor).sum() / float(y_val_tensor.shape[0])).item()
-    test_accuracy = (y_pred_test.eq(y_test_tensor).sum() / float(y_test_tensor.shape[0])).item()
-    
-    tn, fp, fn, tp = confusion_matrix(y_test_tensor.cpu(), y_pred_test.cpu()).ravel()
-    precision = precision_score(y_test_tensor.cpu(), y_pred_test.cpu())
-    recall = recall_score(y_test_tensor.cpu(), y_pred_test.cpu())
-    auc = roc_auc_score(y_test_tensor.cpu(), y_pred_test_prob.cpu())
-    
-    print(f'Train Accuracy: {train_accuracy:.4f}')
-    print(f'Validation Accuracy: {val_accuracy:.4f}')
-    print(f'Test Accuracy: {test_accuracy:.4f}')
-    print(f'True Positives (TP): {tp}')
-    print(f'False Positives (FP): {fp}')
-    print(f'True Negatives (TN): {tn}')
-    print(f'False Negatives (FN): {fn}')
-    print(f'Precision: {precision:.4f}')
-    print(f'Recall: {recall:.4f}')
-    print(f'AUC: {auc:.4f}')
+            # 保存损失值到文本文件
+            with open('losses_embedding_numerical.txt', 'w') as f:
+                for t_loss, v_loss in zip(train_losses, val_losses):
+                    f.write(f'{t_loss},{v_loss}\n')
+
+            # 评估模型
+            model.eval()
+            with torch.no_grad():
+                y_pred_train = model(X_train_categorical_tensor, X_train_numerical_tensor).round()
+                y_pred_val = model(X_val_categorical_tensor, X_val_numerical_tensor).round()
+                y_pred_test = model(X_test_categorical_tensor, X_test_numerical_tensor).round()
+                y_pred_test_prob = model(X_test_categorical_tensor, X_test_numerical_tensor)
+
+                train_accuracy = (y_pred_train.eq(y_train_tensor).sum() / float(y_train_tensor.shape[0])).item()
+                val_accuracy = (y_pred_val.eq(y_val_tensor).sum() / float(y_val_tensor.shape[0])).item()
+                test_accuracy = (y_pred_test.eq(y_test_tensor).sum() / float(y_test_tensor.shape[0])).item()
+
+                tn, fp, fn, tp = confusion_matrix(y_test_tensor.cpu(), y_pred_test.cpu()).ravel()
+                precision = precision_score(y_test_tensor.cpu(), y_pred_test.cpu())
+                recall = recall_score(y_test_tensor.cpu(), y_pred_test.cpu())
+                auc = roc_auc_score(y_test_tensor.cpu(), y_pred_test_prob.cpu())
+
+                print(f'Train Accuracy: {train_accuracy:.4f}')
+                print(f'Validation Accuracy: {val_accuracy:.4f}')
+                print(f'Test Accuracy: {test_accuracy:.4f}')
+                print(f'True Positives (TP): {tp}')
+                print(f'False Positives (FP): {fp}')
+                print(f'True Negatives (TN): {tn}')
+                print(f'False Negatives (FN): {fn}')
+                print(f'Precision: {precision:.4f}')
+                print(f'Recall: {recall:.4f}')
+                print(f'AUC: {auc:.4f}')
