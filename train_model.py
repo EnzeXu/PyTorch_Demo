@@ -36,8 +36,8 @@ all_columns = data.columns.tolist()
 
 # 定义数值变量和类别变量
 numerical_vars = [
-    "0", "1", "2", "3", "4", "5", "6", "7",
-    "8", "9", "10"
+    "N0", "N1", "N2", "N3", "N4", "N5", "N6", "N7",
+    "N8", "N9", "N10"
 ]
 
 # 将'SMM'列作为目标变量，其余的都是特征变量
@@ -54,6 +54,7 @@ numerical_indices = [i for i, col in enumerate(all_columns) if col in numerical_
 # 分离类别型和数值型变量
 X_categorical = X[:, categorical_indices]
 X_numerical = X[:, numerical_indices]
+print(f"X_categorical: {X_categorical.shape}, X_numerical: {X_numerical.shape}")
 
 # 标准化数值型特征数据
 scaler = StandardScaler()
@@ -91,32 +92,65 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
         self.embedding = nn.Embedding(categorical_input_dim, embedding_dim)
         self.categorical_layer = nn.Sequential(
             nn.Linear(embedding_dim, 64),
+            nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
             nn.Linear(64, 32),
-            nn.ReLU()
+            nn.BatchNorm1d(32),  # Enze
+            nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
         )
         self.numerical_layer = nn.Sequential(
             nn.Linear(numerical_input_dim, 128),
+            nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
             nn.Linear(128, 64),
-            nn.ReLU()
+            nn.BatchNorm1d(64),  # Enze
+            nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
         )
         self.combine_layer = nn.Sequential(
             nn.Linear(96, 64),
+            nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
             nn.Linear(64, 32),
+            nn.BatchNorm1d(32),  # Enze
             nn.ReLU(),
+            nn.Dropout(0.3),  # Enze
             nn.Linear(32, 1),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
-    
+
     def forward(self, x_categorical, x_numerical):
+        # x_cat = self.embedding(x_categorical).mean(dim=1)
         x_cat = self.embedding(x_categorical).mean(dim=1)
+        # print(f"x_cat shape: {x_cat.shape}")
         x_cat = self.categorical_layer(x_cat)
         x_num = self.numerical_layer(x_numerical)
         x = torch.cat((x_cat, x_num), dim=1)
         x = self.combine_layer(x)
         return x
+
+
+class MLP(nn.Module):
+    def __init__(self, input_dim):
+        super(MLP, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(64, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        return self.model(x)
+
 
 # 初始化模型、损失函数和优化器
 categorical_input_dim = len(categorical_indices)
@@ -124,6 +158,7 @@ numerical_input_dim = len(numerical_indices)
 embedding_dim = 16
 
 model = MLPWithEmbeddingAndNumerical(categorical_input_dim, numerical_input_dim, embedding_dim).to(device)
+# model = MLP(11).to(device)
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.1)
@@ -187,7 +222,7 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
         except Exception as e:
             pass
 
-        if (epoch + 1) % 1000 == 0:
+        if (epoch + 1) % 200 == 0:
             print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
 
             # 保存 checkpoint
