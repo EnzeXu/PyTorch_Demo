@@ -7,3 +7,4 @@ venv/*
 *.pt
 losses_embedding_numerical.txt
 wandb/*
+!small.csv
