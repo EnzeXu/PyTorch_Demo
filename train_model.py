@@ -29,7 +29,7 @@ print(f"using device: {device}")
 
 # 加载数据
 # data = pd.read_csv('mdmom_forNN_3July2024.csv')
-data = pd.read_csv('small.csv')
+data = pd.read_csv('medium.csv')
 
 # 获取所有列名
 all_columns = data.columns.tolist()

@@ -8,3 +8,4 @@ venv/*
 losses_embedding_numerical.txt
 wandb/*
 !small.csv
+!medium.csv
