@@ -104,31 +104,31 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
             nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(64, 32),
-            nn.BatchNorm1d(32),  # Enze
+            nn.Linear(64, 128),
+            nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
         )
         self.numerical_layer = nn.Sequential(
-            nn.Linear(numerical_input_dim, 128),
-            nn.BatchNorm1d(128),  # Enze
+            nn.Linear(numerical_input_dim, 64),
+            nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(128, 64),
-            nn.BatchNorm1d(64),  # Enze
+            nn.Linear(64, 128),
+            nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
         )
         self.combine_layer = nn.Sequential(
-            nn.Linear(96, 64),
-            nn.BatchNorm1d(64),  # Enze
+            nn.Linear(256, 256),
+            nn.BatchNorm1d(256),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(64, 32),
-            nn.BatchNorm1d(32),  # Enze
+            nn.Linear(256, 128),
+            nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(32, 1),
+            nn.Linear(128, 1),
             nn.Sigmoid(),
         )
 
