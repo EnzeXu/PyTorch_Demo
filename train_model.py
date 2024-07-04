@@ -52,7 +52,7 @@ X_categorical = X[:, categorical_indices]
 X_numerical = X[:, numerical_indices]
 
 
-
+#  Enze: filter trivial columns (all 0's or 1's)
 print(f"X_categorical [before purification]: {X_categorical.shape}")
 X_categorical_max = np.max(X_categorical, axis=0)
 X_categorical_min = np.min(X_categorical, axis=0)
@@ -96,11 +96,11 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
         super(MLPWithEmbeddingAndNumerical, self).__init__()
         self.embedding = nn.Embedding(categorical_input_dim, embedding_dim)
         self.categorical_layer = nn.Sequential(
-            nn.Linear(embedding_dim, 64),
+            nn.Linear(embedding_dim, 64),  # Enze
             nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(64, 128),
+            nn.Linear(64, 128),  # Enze
             nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
@@ -110,17 +110,17 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
             nn.BatchNorm1d(64),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(64, 128),
+            nn.Linear(64, 128),  # Enze
             nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
         )
         self.combine_layer = nn.Sequential(
-            nn.Linear(256, 256),
+            nn.Linear(256, 256),  # Enze
             nn.BatchNorm1d(256),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
-            nn.Linear(256, 128),
+            nn.Linear(256, 128),  # Enze
             nn.BatchNorm1d(128),  # Enze
             nn.ReLU(),
             nn.Dropout(0.3),  # Enze
@@ -141,23 +141,6 @@ class MLPWithEmbeddingAndNumerical(nn.Module):
         return x
 
 
-class MLP(nn.Module):
-    def __init__(self, input_dim):
-        super(MLP, self).__init__()
-        self.model = nn.Sequential(
-            nn.Linear(input_dim, 128),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(128, 64),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(64, 1),
-            nn.Sigmoid()
-        )
-
-    def forward(self, x):
-        return self.model(x)
-
 
 # 初始化模型、损失函数和优化器
 categorical_input_dim = len(categorical_indices)
@@ -168,7 +151,7 @@ model = MLPWithEmbeddingAndNumerical(categorical_input_dim, numerical_input_dim,
 # model = MLP(11).to(device)
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.1)
 
 # 定义 _save_checkpoint 函数
 def _save_checkpoint(ckpt_file_path, model, epoch, global_step, optimizer):
@@ -185,7 +168,7 @@ train_losses = []
 val_losses = []
 
 # 训练模型
-num_epochs = 100000
+num_epochs = 10000
 ckp_path = 'checkpoints'  # 定义 checkpoint 文件保存的目录
 os.makedirs(ckp_path, exist_ok=True)
 time_string = get_now_string()
@@ -229,7 +212,7 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
         except Exception as e:
             pass
 
-        if (epoch + 1) % 200 == 0 or epoch + 1 == num_epochs:
+        if (epoch + 1) % 100 == 0 or epoch + 1 == num_epochs:
             print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, lr: {optimizer.param_groups[0]["lr"]}')
 
             # 保存 checkpoint
@@ -237,7 +220,7 @@ with wandb.init(project='simple-debug', name=f"test_{time_string}"):
             ckpt_file_path = os.path.join(ckp_path, f'step_{global_step}.pt')
             _save_checkpoint(ckpt_file_path, model, epoch, global_step, optimizer)
 
-        if (epoch + 1) % 2000 == 0 or epoch + 1 == num_epochs:
+        if (epoch + 1) % 1000 == 0 or epoch + 1 == num_epochs:
 
             # 保存模型
             if not os.path.exists("save/"):
