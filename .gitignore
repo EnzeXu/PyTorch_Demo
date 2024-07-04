@@ -6,3 +6,4 @@ venv/*
 *.xlsx
 *.pt
 losses_embedding_numerical.txt
+wandb/*
